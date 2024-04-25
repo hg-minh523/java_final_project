@@ -4,12 +4,22 @@
  */
 package GUI;
 
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author KHONG TAM
  */
 public class FromThanhToan extends javax.swing.JFrame {
-
+    public FromThanhToan(String tenKH, String sdtKH, DefaultTableModel model){
+        initComponents();
+        if(jlTenKH != null){
+            jlTenKH.setText(tenKH);
+        }
+        jlSDT.setText(sdtKH);
+        jTable2.setModel(model);
+        
+    }
     /**
      * Creates new form FromThanhToan
      */

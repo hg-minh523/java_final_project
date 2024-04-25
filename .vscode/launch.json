@@ -1,0 +1,70 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Final_project",
+            "request": "launch",
+            "mainClass": "GUI.Final_project",
+            "projectName": "java_final_project_adeadaf4"
+        },
+        {
+            "type": "java",
+            "name": "FromThanhToan",
+            "request": "launch",
+            "mainClass": "GUI.FromThanhToan",
+            "projectName": "java_final_project_adeadaf4"
+        },
+        {
+            "type": "java",
+            "name": "GUI_Main",
+            "request": "launch",
+            "mainClass": "GUI.GUI_Main",
+            "projectName": "java_final_project_adeadaf4"
+        },
+        {
+            "type": "java",
+            "name": "Home",
+            "request": "launch",
+            "mainClass": "GUI.Home",
+            "projectName": "java_final_project_adeadaf4"
+        },
+        {
+            "type": "java",
+            "name": "ProductForm",
+            "request": "launch",
+            "mainClass": "GUI.ProductForm",
+            "projectName": "java_final_project_adeadaf4"
+        },
+        {
+            "type": "java",
+            "name": "Receipt",
+            "request": "launch",
+            "mainClass": "GUI.Receipt",
+            "projectName": "java_final_project_adeadaf4"
+        },
+        {
+            "type": "java",
+            "name": "Report",
+            "request": "launch",
+            "mainClass": "GUI.Report",
+            "projectName": "java_final_project_adeadaf4"
+        },
+        {
+            "type": "java",
+            "name": "formAddProduct",
+            "request": "launch",
+            "mainClass": "GUI.formAddProduct",
+            "projectName": "java_final_project_adeadaf4"
+        }
+    ]
+}

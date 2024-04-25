@@ -6,7 +6,6 @@ package GUI;
 
 import ConnectDb.databaseConnection;
 import GUI.Home;
-import handlers.productControllers;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class Final_project {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        Home home = new Home();
+        GUI_Main home = new GUI_Main();
         
         home.setVisible(true);
     }  

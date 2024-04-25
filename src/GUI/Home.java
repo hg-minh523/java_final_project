@@ -4,35 +4,46 @@
  */
 package GUI;
 
+import entity.Categoryes;
+import entity.Customer;
 import entity.Product;
-import handlers.productControllers;
-import java.awt.Image;
-import java.sql.SQLException;
+import handlers.Category_DAO;
+import handlers.Customer_DAO;
+import handlers.Product_DAO;
+import interfaces.categoryInterface;
+import interfaces.productInterface;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 //import javax.swing.Im;
-
 
 /**
  *
  * @author hgmin
  */
-public class Home extends javax.swing.JPanel {
-ImageIcon leftIcon;
-Image leftImg;
- public productControllers connection;
+public class Home extends javax.swing.JPanel implements productInterface, categoryInterface{
+
+
+    public Product_DAO prod_DAO;
+    public Category_DAO category_DAO;
+    private int skip = 0;
+    DefaultTableModel modelCart;
     /**
      * Creates new form Home
      */
     public Home() {
-        connection = new productControllers();
-        
+//        connection = new productControllers();
+        prod_DAO = new Product_DAO();
+        category_DAO= new Category_DAO();
         initComponents();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -46,24 +57,24 @@ Image leftImg;
         panelMain = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        phoneTxt = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtCart = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jPanel13 = new javax.swing.JPanel();
+        txtphone = new javax.swing.JTextField();
+        txthoten = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        JbCoffee = new javax.swing.JButton();
-        jbDaxay = new javax.swing.JButton();
-        jbTra = new javax.swing.JButton();
-        jbSoda = new javax.swing.JButton();
-        jbKhac = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        jbBanh = new javax.swing.JButton();
+        jPanel16 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jscCafe = new javax.swing.JScrollPane();
         jPanel5 = new javax.swing.JPanel();
+        jPanel11 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel12 = new javax.swing.JPanel();
         jsDaxay = new javax.swing.JScrollPane();
         jPanel6 = new javax.swing.JPanel();
         jscTra = new javax.swing.JScrollPane();
@@ -90,55 +101,13 @@ Image leftImg;
         jLabel1.setText("Cart");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(16, 10, 376, 52));
 
-        phoneTxt.setBackground(new java.awt.Color(255, 204, 102));
-        phoneTxt.setText("Phone");
-        phoneTxt.setToolTipText("");
-        phoneTxt.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 0, 0)));
-        phoneTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        phoneTxt.setName(""); // NOI18N
-        phoneTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                phoneTxtActionPerformed(evt);
-            }
-        });
-        jPanel1.add(phoneTxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(16, 74, 138, 35));
-
-        jComboBox1.setBackground(new java.awt.Color(255, 204, 102));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
-        jComboBox1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 0, 0)));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 74, 151, 35));
-
         jtCart.setBackground(new java.awt.Color(255, 204, 102));
-        jtCart.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Tên sản phẩm", "Giá", "Số lượng", "Tổng giá"
-            }
-        ));
+        String[] columnNames = {  "Tên sản phẩm", "Giá", "Số lượng", "Tổng giá"};
+        modelCart = new DefaultTableModel(columnNames, 0);
+        jtCart.setModel(modelCart);
         jScrollPane1.setViewportView(jtCart);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 376, 330));
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Icojam-Blue-Bits-User-check.24.png"))); // NOI18N
-        jButton1.setPreferredSize(new java.awt.Dimension(60, 18));
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
-            }
-        });
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(329, 74, 63, 36));
 
         jButton2.setBackground(new java.awt.Color(102, 51, 0));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -156,6 +125,59 @@ Image leftImg;
         });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 470, 100, 40));
 
+        txtphone.setBackground(new java.awt.Color(255, 204, 102));
+        txtphone.setText("Phone");
+        txtphone.setToolTipText("");
+        txtphone.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 0, 0)));
+        txtphone.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtphone.setName(""); // NOI18N
+
+        txthoten.setBackground(new java.awt.Color(255, 204, 102));
+        txthoten.setText("Name");
+        txthoten.setToolTipText("");
+        txthoten.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(0, 0, 0)));
+        txthoten.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txthoten.setName(""); // NOI18N
+
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Icojam-Blue-Bits-User-check.24.png"))); // NOI18N
+        jButton1.setPreferredSize(new java.awt.Dimension(60, 18));
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(txtphone, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txthoten, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
+                .addContainerGap(15, Short.MAX_VALUE)
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txthoten, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addComponent(txtphone)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jPanel1.add(jPanel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 370, 60));
+
         panelMain.add(jPanel1, java.awt.BorderLayout.LINE_END);
 
         jPanel2.setPreferredSize(new java.awt.Dimension(696, 527));
@@ -166,122 +188,45 @@ Image leftImg;
         jPanel3.setMinimumSize(new java.awt.Dimension(60, 60));
         jPanel3.setPreferredSize(new java.awt.Dimension(696, 90));
 
-        JbCoffee.setBackground(new java.awt.Color(204, 102, 0));
-        JbCoffee.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        JbCoffee.setForeground(new java.awt.Color(255, 204, 51));
-        JbCoffee.setText("Coffee");
-        JbCoffee.setMaximumSize(new java.awt.Dimension(100, 50));
-        JbCoffee.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                JbCoffeeMouseClicked(evt);
-            }
-        });
-
-        jbDaxay.setBackground(new java.awt.Color(204, 102, 0));
-        jbDaxay.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbDaxay.setForeground(new java.awt.Color(255, 204, 51));
-        jbDaxay.setText("Đá xay");
-        jbDaxay.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jbDaxayMouseClicked(evt);
-            }
-        });
-        jbDaxay.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbDaxayActionPerformed(evt);
-            }
-        });
-
-        jbTra.setBackground(new java.awt.Color(204, 102, 0));
-        jbTra.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbTra.setForeground(new java.awt.Color(255, 204, 51));
-        jbTra.setText("Trà");
-        jbTra.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jbTraMouseClicked(evt);
-            }
-        });
-        jbTra.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbTraActionPerformed(evt);
-            }
-        });
-
-        jbSoda.setBackground(new java.awt.Color(204, 102, 0));
-        jbSoda.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbSoda.setForeground(new java.awt.Color(255, 204, 51));
-        jbSoda.setText("Soda");
-        jbSoda.setPreferredSize(new java.awt.Dimension(75, 30));
-        jbSoda.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jbSodaMouseClicked(evt);
-            }
-        });
-
-        jbKhac.setBackground(new java.awt.Color(204, 102, 0));
-        jbKhac.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbKhac.setForeground(new java.awt.Color(255, 204, 51));
-        jbKhac.setText("Thức uống khác");
-        jbKhac.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jbKhacMouseClicked(evt);
-            }
-        });
-
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 204, 51));
         jLabel5.setText("Menu");
 
-        jbBanh.setBackground(new java.awt.Color(204, 102, 0));
-        jbBanh.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jbBanh.setForeground(new java.awt.Color(255, 204, 51));
-        jbBanh.setText("Bánh");
-        jbBanh.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jbBanhMouseClicked(evt);
+        jPanel16.setBackground(new java.awt.Color(102, 51, 0));
+        try{
+            ArrayList<Categoryes> categories = category_DAO.getList();
+            for (Categoryes cate : categories) {
+
+                JButton categoryBtn = new JButton(cate.getName());
+                categoryBtn.addActionListener(new ActionListener(){
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Handle button click here
+                        getIdOfCategoy(cate.getId());
+                    }
+                });
+                jPanel16.add(categoryBtn);
             }
-        });
-        jbBanh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbBanhActionPerformed(evt);
-            }
-        });
+        }catch( Exception e){
+
+        }
+        jPanel16.setLayout(new java.awt.GridLayout(1, 0));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(JbCoffee, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15)
-                        .addComponent(jbDaxay, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15)
-                        .addComponent(jbTra, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15)
-                        .addComponent(jbSoda, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(jbBanh, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jbKhac)))
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jbDaxay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbTra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jbSoda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jbKhac, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jbBanh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(JbCoffee, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
         );
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.PAGE_START);
@@ -289,24 +234,48 @@ Image leftImg;
         jPanel4.setBackground(new java.awt.Color(204, 204, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
         jPanel4.setPreferredSize(new java.awt.Dimension(696, 437));
-        try {
-            ArrayList<Product> products = connection.getListHome();
-            for (Product product : products) {
-                System.out.print(1);
-                ProductPanel productPanel = new ProductPanel(product);
-                jPanel4.add(productPanel);
-            }
-
-        }catch( Exception e){
-
-        }
         jPanel4.setLayout(new javax.swing.OverlayLayout(jPanel4));
 
         jscCafe.setPreferredSize(new java.awt.Dimension(696, 437));
 
         jPanel5.setBackground(new java.awt.Color(204, 255, 204));
         jPanel5.setPreferredSize(new java.awt.Dimension(696, 437));
-        jPanel5.setLayout(new java.awt.GridLayout(2, 3, 15, 15));
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
+        jPanel11.setMinimumSize(new java.awt.Dimension(50, 50));
+        jPanel11.setPreferredSize(new java.awt.Dimension(346, 25));
+
+        jLabel2.setText("Truoc");
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+        jPanel11.add(jLabel2);
+
+        jLabel3.setText("Sau");
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel3MouseClicked(evt);
+            }
+        });
+        jPanel11.add(jLabel3);
+
+        jPanel5.add(jPanel11, java.awt.BorderLayout.PAGE_END);
+
+        jPanel12.setLayout(new java.awt.GridLayout(0, 4));
+        try{
+            ArrayList<Product> products = prod_DAO.getList(skip);
+            for (Product product : products) {
+
+                ProductPanel prodPanel = new ProductPanel(product,this);
+                jPanel12.add(prodPanel);
+            }
+        }catch( Exception e){
+
+        }
+        jPanel5.add(jPanel12, java.awt.BorderLayout.CENTER);
+
         jscCafe.setViewportView(jPanel5);
 
         jPanel4.add(jscCafe);
@@ -370,101 +339,98 @@ Image leftImg;
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void phoneTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_phoneTxtActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_phoneTxtActionPerformed
-
-    private void jbDaxayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDaxayActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jbDaxayActionPerformed
-
-    private void jbTraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbTraActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jbTraActionPerformed
-
-    private void jbBanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBanhActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jbBanhActionPerformed
-
-    private void JbCoffeeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbCoffeeMouseClicked
-        jscCafe.setVisible(true);
-        jsDaxay.setVisible(false);
-        jscTra.setVisible(false);
-        jscSoda.setVisible(false);
-        jscKhac.setVisible(false);
-        jscBanh.setVisible(false);
-    }//GEN-LAST:event_JbCoffeeMouseClicked
-
-    private void jbDaxayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbDaxayMouseClicked
-        jscCafe.setVisible(false);
-        jsDaxay.setVisible(true);
-        jscTra.setVisible(false);
-        jscSoda.setVisible(false);
-        jscKhac.setVisible(false);
-        jscBanh.setVisible(false);
-    }//GEN-LAST:event_jbDaxayMouseClicked
-
-    private void jbTraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbTraMouseClicked
-         jscCafe.setVisible(false);
-        jsDaxay.setVisible(false);
-        jscTra.setVisible(true);
-        jscSoda.setVisible(false);
-        jscKhac.setVisible(false);
-        jscBanh.setVisible(false);
-    }//GEN-LAST:event_jbTraMouseClicked
-
-    private void jbSodaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbSodaMouseClicked
-         jscCafe.setVisible(false);
-        jsDaxay.setVisible(false);
-        jscTra.setVisible(false);
-        jscSoda.setVisible(true);
-        jscKhac.setVisible(false);
-        jscBanh.setVisible(false);
-    }//GEN-LAST:event_jbSodaMouseClicked
-
-    private void jbBanhMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbBanhMouseClicked
-        jscCafe.setVisible(false);
-        jsDaxay.setVisible(false);
-        jscTra.setVisible(false);
-        jscSoda.setVisible(false);
-        jscKhac.setVisible(false);
-        jscBanh.setVisible(true);
-    }//GEN-LAST:event_jbBanhMouseClicked
-
-    private void jbKhacMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbKhacMouseClicked
-         jscCafe.setVisible(false);
-        jsDaxay.setVisible(false);
-        jscTra.setVisible(false);
-        jscSoda.setVisible(false);
-        jscKhac.setVisible(true);
-        jscBanh.setVisible(false);
-    }//GEN-LAST:event_jbKhacMouseClicked
-
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-      // lệnh thêm lưu thông tin vào database
-        JOptionPane.showConfirmDialog(this, "Đã thêm khách hàng");
-    }//GEN-LAST:event_jButton1MouseClicked
-
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        FromThanhToan frtt=new FromThanhToan();
+        FromThanhToan frtt = new FromThanhToan();
         frtt.setVisible(true);
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        String tenKH = txthoten.getText();
+        String sdtKH = txtphone.getText();
+        DefaultTableModel model = (DefaultTableModel)jtCart.getModel();
+        FromThanhToan frtt = new FromThanhToan(tenKH,sdtKH,model);
+        frtt.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+
+        try {
+
+            skip++;
+            jPanel12.removeAll();
+            prod_DAO.clearList();
+            ArrayList<Product> products = prod_DAO.getList(skip);
+            for (Product product : products) {
+                ProductPanel prodPanel = new ProductPanel(product,this);
+                jPanel12.add(prodPanel);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        jPanel12.revalidate();
+        jPanel12.repaint();
+    }//GEN-LAST:event_jLabel3MouseClicked
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+
+        try {
+            if (skip > 0) {
+                skip--;
+            }
+            jPanel12.removeAll();
+            prod_DAO.clearList();
+            ArrayList<Product> products = prod_DAO.getList(skip);
+            for (Product product : products) {
+                ProductPanel prodPanel = new ProductPanel(product,this);
+                jPanel12.add(prodPanel);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        jPanel12.revalidate();
+        jPanel12.repaint();
+    }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+    private String generateCustomerId() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        String formattedTime = currentTime.format(DateTimeFormatter.ofPattern("yyMMddHHmmss"));
+        return "KH" + formattedTime;
+    }
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // lệnh thêm lưu thông tin vào database
+         // lệnh thêm lưu thông tin vào database
+              String customerId = generateCustomerId();
+              String name=txthoten.getText();
+              String sdt=txtphone.getText();
+              LocalDate create_at=LocalDate.now();
+               LocalDate update_at=LocalDate.now();
+              LocalDate delete_at=LocalDate.now();
+              System.out.println(""+sdt);
+            Customer  Cus=new Customer(customerId,  name,sdt, create_at, update_at, delete_at);
+              Customer_DAO liscus=new Customer_DAO();
+              if(!liscus.ktKhachHangTonTai(sdt)){
+                if(liscus.addCustomer(Cus)){
+                    JOptionPane.showConfirmDialog(this, "Đã thêm khách hàng");
+
+            }
+           
+              } 
+            else {
+                        JOptionPane.showConfirmDialog(this, "Khách hàng đã tồn tại");
+
+            }
+    }//GEN-LAST:event_jButton1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -502,15 +468,19 @@ Image leftImg;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton JbCoffee;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -520,11 +490,6 @@ Image leftImg;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton jbBanh;
-    private javax.swing.JButton jbDaxay;
-    private javax.swing.JButton jbKhac;
-    private javax.swing.JButton jbSoda;
-    private javax.swing.JButton jbTra;
     private javax.swing.JScrollPane jsDaxay;
     private javax.swing.JScrollPane jscBanh;
     private javax.swing.JScrollPane jscCafe;
@@ -533,10 +498,38 @@ Image leftImg;
     private javax.swing.JScrollPane jscTra;
     private javax.swing.JTable jtCart;
     private javax.swing.JPanel panelMain;
-    private javax.swing.JTextField phoneTxt;
+    private javax.swing.JTextField txthoten;
+    private javax.swing.JTextField txtphone;
     // End of variables declaration//GEN-END:variables
 
     private void setDefaultCloseOperation(int DO_NOTHING_ON_CLOSE) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void onProductIdReceived(Product prod) {
+        Object[] newRowData = {prod.getName(), prod.getPrice(), 1, prod.getPrice()};
+//jtCart.
+        modelCart.addRow(newRowData);
+    }
+
+    @Override
+    public void getIdOfCategoy(String categoryId) {
+        try {
+            
+            jPanel12.removeAll();
+            prod_DAO.clearList();
+            ArrayList<Product> products = prod_DAO.getListByCategory(0,categoryId);
+            for (Product product : products) {
+                ProductPanel prodPanel = new ProductPanel(product,this);
+                jPanel12.add(prodPanel);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        jPanel12.revalidate();
+        jPanel12.repaint();
     }
 }

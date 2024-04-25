@@ -4,22 +4,40 @@
  */
 package GUI;
 
+import ConnectDb.databaseConnection;
+import entity.Product;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 /**
  *
  * @author KHONG TAM
  */
 public class GUI_Main extends javax.swing.JFrame {
+
+    private Home home;
+    private ProductForm product;
+    private Receipt receipt;
+//    private Report report;
+
+    
 //public Home home;
     /**
      * Creates new form GUI_Main
      */
     public GUI_Main() {
+        this.receipt = new Receipt();
+        this.product = new ProductForm();
+//        this.report = new Report();
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH); 
     }
 
     /**
@@ -31,6 +49,7 @@ public class GUI_Main extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
         jpanelMain = new javax.swing.JPanel();
         jpMenu = new javax.swing.JPanel();
         JpHome = new javax.swing.JPanel();
@@ -106,6 +125,20 @@ public class GUI_Main extends javax.swing.JFrame {
 
         JbProduct.setBackground(new java.awt.Color(204, 102, 0));
         JbProduct.setToolTipText("");
+        JbProduct.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                JbProductAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        JbProduct.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JbProductMouseClicked(evt);
+            }
+        });
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Pictogrammers-Material-Coffee.48.png"))); // NOI18N
 
@@ -142,12 +175,17 @@ public class GUI_Main extends javax.swing.JFrame {
 
         JbReceipt.setBackground(new java.awt.Color(204, 102, 0));
         JbReceipt.setToolTipText("");
+        JbReceipt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JbReceiptMouseClicked(evt);
+            }
+        });
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Iconsmind-Outline-Receipt.48.png"))); // NOI18N
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 204, 51));
-        jLabel6.setText("Home");
+        jLabel6.setText("Receipt");
         jLabel6.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout JbReceiptLayout = new javax.swing.GroupLayout(JbReceipt);
@@ -155,7 +193,7 @@ public class GUI_Main extends javax.swing.JFrame {
         JbReceiptLayout.setHorizontalGroup(
             JbReceiptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JbReceiptLayout.createSequentialGroup()
-                .addContainerGap(31, Short.MAX_VALUE)
+                .addContainerGap(19, Short.MAX_VALUE)
                 .addGroup(JbReceiptLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(jLabel5))
@@ -175,6 +213,11 @@ public class GUI_Main extends javax.swing.JFrame {
 
         JbStatistic.setBackground(new java.awt.Color(204, 102, 0));
         JbStatistic.setToolTipText("");
+        JbStatistic.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JbStatisticMouseClicked(evt);
+            }
+        });
 
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Picol-Picol-Statistics.48.png"))); // NOI18N
 
@@ -246,8 +289,10 @@ public class GUI_Main extends javax.swing.JFrame {
 
         JpMain.setBackground(new java.awt.Color(255, 204, 204));
         JpMain.setLayout(new java.awt.BorderLayout());
-        Home home=new Home();
+        home=new Home();
         JpMain.add(home,BorderLayout.CENTER);
+        home.setVisible(true);
+        //       JpMain.remove(home);
         jpanelMain.add(JpMain, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -265,8 +310,47 @@ public class GUI_Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JpHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JpHomeMouseClicked
-            
+       
+        home.setVisible(true);
+        receipt.setVisible(false);
+        product.setVisible(false);
+        
     }//GEN-LAST:event_JpHomeMouseClicked
+
+    private void JbReceiptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbReceiptMouseClicked
+      home.setVisible(false);
+      product.setVisible(false);
+      
+      JpMain.add(receipt,BorderLayout.CENTER);
+    receipt.setVisible(true);
+    
+      
+       
+               
+    }//GEN-LAST:event_JbReceiptMouseClicked
+
+    private void JbStatisticMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbStatisticMouseClicked
+        home.setVisible(false);
+        receipt.setVisible(false);
+        product.setVisible(false);
+        
+
+//        JpMain.add(report, BorderLayout.CENTER);
+//        report.setVisible(true);
+    }//GEN-LAST:event_JbStatisticMouseClicked
+
+    private void JbProductAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_JbProductAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_JbProductAncestorAdded
+
+    private void JbProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbProductMouseClicked
+        home.setVisible(false);
+        receipt.setVisible(false);
+        
+        
+        JpMain.add(product, BorderLayout.CENTER);
+        product.setVisible(true);
+    }//GEN-LAST:event_JbProductMouseClicked
 
     /**
      * @param args the command line arguments
@@ -299,6 +383,8 @@ public class GUI_Main extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GUI_Main().setVisible(true);
+//                databaseConnection connection=databaseConnection.getIntance();
+//                System.err.println(connection);
             }
         });
     }
@@ -320,6 +406,7 @@ public class GUI_Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JPanel jpMenu;
     private javax.swing.JPanel jpanelMain;
     // End of variables declaration//GEN-END:variables

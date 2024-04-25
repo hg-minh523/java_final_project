@@ -7,6 +7,8 @@ package ConnectDb;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //import 
 
 /**
@@ -14,14 +16,27 @@ import java.sql.SQLException;
  * @author hgmin
  */
 public class databaseConnection {
-
-    public Connection connection;
-    public String connectionUrl = "jdbc:sqlserver://LAPTOP-2O7KTCB9:1433;databaseName=cafe_management;user=sa;password=123123;encrypt=true;trustServerCertificate=true;";
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        return DriverManager.getConnection(connectionUrl);
+public Connection con=null;
+//private static databaseConnection intance =new databaseConnection();
+//public static  databaseConnection getIntance(){
+//    return intance;
+//            
+//}
+public databaseConnection(){
+    String url="jdbc:sqlserver://localhost:1433;databaseName=cafe_managerment";
+    String user="sa";
+    String pass="123456";
+    try {
+        con=DriverManager.getConnection(url, user, pass);
+        System.out.println(con);
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
     
+}
+   public Connection getConnection(){
+       return this.con;
+   }
 }
 
 

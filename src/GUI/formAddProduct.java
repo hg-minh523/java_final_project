@@ -44,7 +44,8 @@ public class formAddProduct extends javax.swing.JFrame {
     private Product_DAO productDAO;
     private Category_DAO categoryDAO;
     private Product product ;
-    private String checked;
+    private String checked = "save";
+    private static String productID;
     
 
     
@@ -64,6 +65,7 @@ public class formAddProduct extends javax.swing.JFrame {
         hienthidanhmuc();
         hienthiVAT();
         checked = check;
+        productID = product.getId();
         txtTenSP.setText(product.getName());
         txtGia.setText(product.getPrice()+"");
         txtOrigin_price.setText(product.getOrigin_price()+"");
@@ -332,14 +334,27 @@ public class formAddProduct extends javax.swing.JFrame {
         return "SP" + formattedTime;
     }
     private void jbtnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAcceptActionPerformed
-        if(checked.equalsIgnoreCase("view")){
-            setVisible(false);
-            return;
-        }else if(checked.equalsIgnoreCase("edit")){
-            updateProduct();
-        }else{
-            saveProduct();
+        switch(checked){
+            case "view":
+                setVisible(false);
+                break;
+            case "edit":
+                updateProduct();
+                break;
+            case "save":
+                saveProduct();
+                break;
         }
+//        if(checked.equalsIgnoreCase("view")){
+//            setVisible(false);
+//            return;
+//        }else if(checked.equalsIgnoreCase("edit")){
+//            updateProduct();
+//            return;
+//        }else{
+//            saveProduct();
+//            return;
+//        }
 
         
     }//GEN-LAST:event_jbtnAcceptActionPerformed
@@ -355,7 +370,7 @@ public class formAddProduct extends javax.swing.JFrame {
             Logger.getLogger(formAddProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        String id = product.getId();
+        String id = productID;
         String name = txtTenSP.getText();
         String strPrice = txtGia.getText();
         Double price = Double.parseDouble(strPrice);
@@ -381,7 +396,9 @@ public class formAddProduct extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Đã cập nhật sản phẩm");
             setVisible(false);
             productDAO.clearList();
-            ProductForm prf = new ProductForm();
+            ArrayList<Product> list = new ArrayList<>();
+            list = productDAO.getListProduct();
+            ProductForm prf = new ProductForm(list);
             prf.setVisible(true);
         }else{
             
@@ -426,7 +443,9 @@ public class formAddProduct extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Đã thêm sản phẩm mới");
             setVisible(false);
             productDAO.clearList();
-            ProductForm prf = new ProductForm();
+            ArrayList<Product> list = new ArrayList<>();
+            list = productDAO.getListProduct();
+            ProductForm prf = new ProductForm(list);
             prf.setVisible(true);
         }else{
             

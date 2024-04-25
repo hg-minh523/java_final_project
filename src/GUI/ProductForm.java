@@ -50,6 +50,11 @@ public class ProductForm extends javax.swing.JPanel {
     /**
      * Creates new form Product
      */
+    public ProductForm(ArrayList<Product> listProduct){
+        initComponents();
+        hienthilentable(listProduct);
+        hienthiCategory();
+    }
     public ProductForm() {
         productDAO.clearList();
         list = productDAO.getListProduct();
@@ -218,6 +223,7 @@ public class ProductForm extends javax.swing.JPanel {
 
     private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jPanel3MouseClicked
         formAddProduct fm = new formAddProduct();
+        this.setEnabled(false);
         fm.setVisible(true);
     }// GEN-LAST:event_jPanel3MouseClicked
 
@@ -275,27 +281,15 @@ public class ProductForm extends javax.swing.JPanel {
     private javax.swing.JTable tableProduct;
     // End of variables declaration//GEN-END:variables
 
-    public final void hienthilentable(ArrayList<Product> products) {
+    public void hienthilentable(ArrayList<Product> products) {
         tableProduct.setModel(new DefaultTableModel());
         String[] columnName = { "Ảnh", "Tên sản phẩm", "Giá Bán", "" };
         Object[][] rows = new Object[products.size()][4];
-        BufferedImage bi = null;
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getImage() != null) {
-                // ImageIcon image = new ImageIcon(new ImageIcon("D:\\LT
-                // HSK-JAVA\\java_final_project\\src\\GUI\\assets\\"+products.get(i).getImage()).getImage().getScaledInstance(150,
-                // 120, Image.SCALE_SMOOTH));
-                // rows[i][0] = image;
-
-                try {
-                    bi = ImageIO.read(new File("D:\\LT HSK-JAVA\\java_final_project\\src\\GUI\\assets\\" + products.get(i).getImage()));
-                } catch (IOException ex) {
-                    Logger.getLogger(formAddProduct.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                Image img = bi.getScaledInstance(170, 140, Image.SCALE_SMOOTH);
-                ImageIcon icon = new ImageIcon(img);
-                rows[i][0] = icon;
-
+                 ImageIcon image = new ImageIcon(new ImageIcon("D:\\LTHSK-JAVA\\java_final_project\\src\\GUI\\assets\\"+products.get(i).getImage())
+                         .getImage().getScaledInstance(150,120, Image.SCALE_SMOOTH));
+                 rows[i][0] = image;
             } else {
                 rows[i][0] = null;
             }

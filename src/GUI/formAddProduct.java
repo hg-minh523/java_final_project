@@ -43,7 +43,7 @@ public class formAddProduct extends javax.swing.JFrame {
     private static String path2;
     private Product_DAO productDAO;
     private Category_DAO categoryDAO;
-    private Product product ;
+    private Product productOld = null ;
     private String checked = "save";
     private static String productID;
     
@@ -65,6 +65,7 @@ public class formAddProduct extends javax.swing.JFrame {
         hienthidanhmuc();
         hienthiVAT();
         checked = check;
+        productOld = product;
         productID = product.getId();
         txtTenSP.setText(product.getName());
         txtGia.setText(product.getPrice()+"");
@@ -334,6 +335,7 @@ public class formAddProduct extends javax.swing.JFrame {
         return "SP" + formattedTime;
     }
     private void jbtnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAcceptActionPerformed
+        
         switch(checked){
             case "view":
                 setVisible(false);
@@ -345,16 +347,6 @@ public class formAddProduct extends javax.swing.JFrame {
                 saveProduct();
                 break;
         }
-//        if(checked.equalsIgnoreCase("view")){
-//            setVisible(false);
-//            return;
-//        }else if(checked.equalsIgnoreCase("edit")){
-//            updateProduct();
-//            return;
-//        }else{
-//            saveProduct();
-//            return;
-//        }
 
         
     }//GEN-LAST:event_jbtnAcceptActionPerformed
@@ -388,18 +380,23 @@ public class formAddProduct extends javax.swing.JFrame {
         String discription = txtMoTa.getText();
         LocalDate createAt = LocalDate.now();
         Double VAT = Double.parseDouble(cboVAT.getSelectedItem().toString().replace("%", ""))/100;
-        String[] img = path2.split("\\\\");
-        String image = img[img.length -1];
-        product = new Product(id, name, discription,price,image,VAT,oriqin_price,category,createAt);
+        String image = null;
+        if(path2 != null){
+            String[] img = path2.split("\\\\");
+            image = img[img.length -1];
+        }else{
+            image = productOld.getImage();
+        }
+        Product product = new Product(id, name, discription,price,image,VAT,oriqin_price,category,createAt);
         productDAO = new Product_DAO();
         if(productDAO.updateProduct(product)){
             JOptionPane.showMessageDialog(this, "Đã cập nhật sản phẩm");
             setVisible(false);
             productDAO.clearList();
-            ArrayList<Product> list = new ArrayList<>();
-            list = productDAO.getListProduct();
+            ArrayList<Product> list = productDAO.getListProduct();
             ProductForm prf = new ProductForm(list);
             prf.setVisible(true);
+            
         }else{
             
             JOptionPane.showMessageDialog(this, "Cập nhật không thành công");
@@ -437,16 +434,16 @@ public class formAddProduct extends javax.swing.JFrame {
         Double VAT = Double.parseDouble(cboVAT.getSelectedItem().toString().replace("%", ""))/100;
         String[] img = path2.split("\\\\");
         String image = img[img.length -1];
-        product = new Product(id, name, discription,price,image,VAT,oriqin_price,category,createAt);
+        Product product = new Product(id, name, discription,price,image,VAT,oriqin_price,category,createAt);
         productDAO = new Product_DAO();
         if(productDAO.saveProduct(product)){
-            JOptionPane.showMessageDialog(this, "Đã thêm sản phẩm mới");
+            JOptionPane.showMessageDialog(this, "Đã thêm sản phẩm mới"); 
             setVisible(false);
             productDAO.clearList();
-            ArrayList<Product> list = new ArrayList<>();
-            list = productDAO.getListProduct();
+            ArrayList<Product> list = productDAO.getListProduct();
             ProductForm prf = new ProductForm(list);
             prf.setVisible(true);
+            
         }else{
             
             JOptionPane.showMessageDialog(this, "Thêm không thành công");

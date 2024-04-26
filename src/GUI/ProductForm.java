@@ -46,19 +46,28 @@ public class ProductForm extends javax.swing.JPanel {
     private JButton btnCategory;
     private String category_id;
     private TableCellRenderer TableActionCellRender;
+    
+
 
     /**
      * Creates new form Product
      */
+
     public ProductForm(ArrayList<Product> listProduct){
+
         initComponents();
+        revalidate();
+        repaint();
         hienthilentable(listProduct);
         hienthiCategory();
     }
     public ProductForm() {
+
         productDAO.clearList();
         list = productDAO.getListProduct();
         initComponents();
+        revalidate();
+        repaint();
         hienthilentable(list);
         hienthiCategory();
 
@@ -223,7 +232,6 @@ public class ProductForm extends javax.swing.JPanel {
 
     private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jPanel3MouseClicked
         formAddProduct fm = new formAddProduct();
-        this.setEnabled(false);
         fm.setVisible(true);
     }// GEN-LAST:event_jPanel3MouseClicked
 
@@ -262,7 +270,8 @@ public class ProductForm extends javax.swing.JPanel {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                ProductForm main = new ProductForm();
+                main.setVisible(true);
             }
         });
     }
@@ -287,7 +296,7 @@ public class ProductForm extends javax.swing.JPanel {
         Object[][] rows = new Object[products.size()][4];
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getImage() != null) {
-                 ImageIcon image = new ImageIcon(new ImageIcon("D:\\LTHSK-JAVA\\java_final_project\\src\\GUI\\assets\\"+products.get(i).getImage())
+                 ImageIcon image = new ImageIcon(new ImageIcon("D:\\LT HSK-JAVA\\java_final_project\\src\\GUI\\assets\\"+products.get(i).getImage())
                          .getImage().getScaledInstance(150,120, Image.SCALE_SMOOTH));
                  rows[i][0] = image;
             } else {

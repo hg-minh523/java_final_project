@@ -6,6 +6,7 @@ package GUI;
 
 import ConnectDb.databaseConnection;
 import entity.Product;
+import handlers.Product_DAO;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -346,7 +347,6 @@ public class GUI_Main extends javax.swing.JFrame {
     private void JbProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbProductMouseClicked
         home.setVisible(false);
         receipt.setVisible(false);
-        
         
         JpMain.add(product, BorderLayout.CENTER);
         product.setVisible(true);

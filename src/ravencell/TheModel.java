@@ -28,19 +28,7 @@ public class TheModel extends AbstractTableModel{
             return getValueAt(0, column).getClass();
         }
     }
-//    public Class<?> getColumnClass(int column, int length){
-//        if(column == 0){
-//            return Icon.class;
-//        }else{
-//            if (rows.length > 0 && rows[0] != null && rows[0].length > column) {
-//                return getValueAt(0, column).getClass();
-//            } else {
-//                // Return a default class for other columns (e.g., String.class)
-//                return String.class; // You can adjust this based on your data types
-//            }
-//            
-//        }
-//    }
+
     @Override
     public int getRowCount() {
         return this.rows.length;
@@ -48,19 +36,15 @@ public class TheModel extends AbstractTableModel{
 
    @Override
     public int getColumnCount() {
+        
         return this.columns.length;
+       
     }
 
    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return rows[rowIndex][columnIndex];
-//        if (rowIndex >= 0 && rowIndex < rows.length && columnIndex >= 0 && columnIndex < rows[rowIndex].length) {
-//            return rows[rowIndex][columnIndex];
-//        } else {
-//            return null;
-//        }
-//return rows.length > 0 && rows[0] != null && rows[0].length > columnIndex
-//                ? getValueAt(0, columnIndex).getClass() : null; 
+
     }
     @Override
     public String getColumnName(int col){

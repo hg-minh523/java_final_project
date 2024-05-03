@@ -2,16 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/GUI/ProductForm.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/GUI/ProductPanel.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/handlers/Category_DAO.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/GUI/formAddProduct.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/handlers/Product_DAO.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/entity/Product.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/GUI/Home.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/GUI/GUI_Main.java</file>
-            <file>file:/D:/LT%20HSK-JAVA/java_final_project/src/ravencell/TheModel.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

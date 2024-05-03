@@ -25,6 +25,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -46,7 +47,7 @@ public class formAddProduct extends javax.swing.JFrame {
     private Product productOld = null ;
     private String checked = "save";
     private static String productID;
-    
+
 
     
 
@@ -76,7 +77,7 @@ public class formAddProduct extends javax.swing.JFrame {
         
         BufferedImage bi = null;
         try {
-            bi = ImageIO.read(new File("D:\\LT HSK-JAVA\\java_final_project\\src\\GUI\\assets\\"+product.getImage()));
+            bi = ImageIO.read(new File("src/GUI/assets/"+product.getImage()));
         } catch (IOException ex) {
             Logger.getLogger(formAddProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -341,9 +342,11 @@ public class formAddProduct extends javax.swing.JFrame {
                 setVisible(false);
                 break;
             case "edit":
+                
                 updateProduct();
                 break;
             case "save":
+                
                 saveProduct();
                 break;
         }
@@ -396,7 +399,8 @@ public class formAddProduct extends javax.swing.JFrame {
             ArrayList<Product> list = productDAO.getListProduct();
             ProductForm prf = new ProductForm(list);
             prf.setVisible(true);
-            
+            prf.revalidate();
+            prf.repaint();
         }else{
             
             JOptionPane.showMessageDialog(this, "Cập nhật không thành công");
@@ -443,6 +447,8 @@ public class formAddProduct extends javax.swing.JFrame {
             ArrayList<Product> list = productDAO.getListProduct();
             ProductForm prf = new ProductForm(list);
             prf.setVisible(true);
+            prf.revalidate();
+            prf.repaint();
             
         }else{
             

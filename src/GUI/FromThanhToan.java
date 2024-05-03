@@ -4,7 +4,9 @@
  */
 package GUI;
 
+import java.util.Date;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 /**
  *
@@ -17,8 +19,11 @@ public class FromThanhToan extends javax.swing.JFrame {
             jlTenKH.setText(tenKH);
         }
         jlSDT.setText(sdtKH);
+        Date currentDate = new Date();
+        jlNgaytao.setText(currentDate.toString());
         jTable2.setModel(model);
-        
+        jTable2.removeColumn(jTable2.getColumnModel().getColumn(5));
+       
     }
     /**
      * Creates new form FromThanhToan
@@ -124,7 +129,7 @@ public class FromThanhToan extends javax.swing.JFrame {
 
         jlTongtien.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jlTongtien.setForeground(new java.awt.Color(153, 51, 0));
-        jlTongtien.setText("Tổng tiền");
+        jlTongtien.setText("0");
         jPanel1.add(jlTongtien, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 370, 100, -1));
 
         jPanel2.setBackground(new java.awt.Color(153, 51, 0));

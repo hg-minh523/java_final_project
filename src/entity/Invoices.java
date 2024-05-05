@@ -20,36 +20,32 @@ public class Invoices {
     private LocalDate credate_at;
     private Employee employee;
     private Customer customer;
-    private LocalDate delete_at;
-    private LocalDate upadte_at;
+//    private LocalDate delete_at;
+//    private LocalDate upadte_at;
     private String description;
-    private Invoice_detail indetail;
+    
 
     public Invoices(String id) {
         this.id = id;
     }
 
-    public Invoices(String id, LocalDate credate_at, Employee employee, Customer customer, LocalDate delete_at, LocalDate upadte_at, String description, Invoice_detail indetail) {
+    public Invoices() {
+    }
+
+    public Invoices(String id, LocalDate credate_at, Employee employee, Customer customer, String description) {
         this.id = id;
         this.credate_at = credate_at;
         this.employee = employee;
         this.customer = customer;
-        this.delete_at = delete_at;
-        this.upadte_at = upadte_at;
         this.description = description;
-        this.indetail = indetail;
     }
+    
+
+   
 
     
 
-    public Invoice_detail getindetail() {
-        return indetail;
-    }
-
-    public void setList_indetail(Invoice_detail indetail) {
-        this.indetail = indetail;
-    }
-
+   
     
 
     public String getDescription() {
@@ -79,14 +75,7 @@ public class Invoices {
         return customer;
     }
 
-    public LocalDate getDelete_at() {
-        return delete_at;
-    }
-
-    public LocalDate getUpadte_at() {
-        return upadte_at;
-    }
-
+    
     public void setId(String id) {
         this.id = id;
     }
@@ -104,15 +93,7 @@ public class Invoices {
         this.customer = customer;
     }
 
-    public void setDelete_at(LocalDate delete_at) {
-        this.delete_at = delete_at;
-    }
-
-    public void setUpadte_at(LocalDate upadte_at) {
-        this.upadte_at = upadte_at;
-    }
-    
-
+   
     
     
 
@@ -136,12 +117,13 @@ public class Invoices {
         final Invoices other = (Invoices) obj;
         return Objects.equals(this.id, other.id);
     }
-    public double caculatorTotal(){
-        double toatl=0;
-        
-            toatl=toatl+  indetail.caculatorEachItem();
-        
-        return  toatl;
+public double caculatorTotal(ArrayList<Invoice_detail> list) {
+    double total = 0;
+    for (Invoice_detail invoiceDetail : list) {
+        total =invoiceDetail.caculatorEachItem()+ total;
     }
+    return total;
+}
+
     
 }

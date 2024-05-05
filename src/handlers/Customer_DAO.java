@@ -95,5 +95,28 @@ public class Customer_DAO extends databaseConnection{
         return false;
 
     }
+    
+    public Customer getCustomer(String sdt) {
+        con = ConnectDB.getConnection();
+        PreparedStatement statement = null;
+        try {
+            statement = con.prepareStatement("SELECT * FROM customers where phone=?");
+                        statement.setString(1, sdt);
+
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+             cus = new Customer(rs.getString("id"), rs.getString("name"), rs.getString("phone"), LocalDate.parse(rs.getString("create_at")), LocalDate.parse(rs.getString("create_at")), LocalDate.parse(rs.getString("create_at")));
+            return cus;
+
+            }
+            else {
+                return null;
+            }
+        } catch (SQLException e) {
+        }
+        return null;
+
+    }
 
 }

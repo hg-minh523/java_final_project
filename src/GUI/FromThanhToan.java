@@ -4,6 +4,28 @@
  */
 package GUI;
 
+import entity.Customer;
+import entity.Employee;
+import entity.Invoice_detail;
+import entity.Invoices;
+import entity.Product;
+import handlers.Customer_DAO;
+import handlers.Invoices_DAO;
+import handlers.Invoicesdetail_DAO;
+import interfaces.CheckoutInterface;
+import interfaces.orderInterface;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
@@ -13,25 +35,43 @@ import javax.swing.table.TableColumnModel;
  * @author KHONG TAM
  */
 public class FromThanhToan extends javax.swing.JFrame {
-    public FromThanhToan(String tenKH, String sdtKH, DefaultTableModel model){
-        initComponents();
-        if(jlTenKH != null){
+
+    private Employee emp1;
+    private DefaultTableModel model2;
+    private CheckoutInterface checkout;
+    private orderInterface listener;
+
+    public void openForm(String id, String tenKH, String sdtKH, DefaultTableModel model, double total, Employee emp, CheckoutInterface check) {
+        if (jlTenKH != null) {
             jlTenKH.setText(tenKH);
         }
+        this.checkout = check;
+        this.model2 = model;
         jlSDT.setText(sdtKH);
-        Date currentDate = new Date();
-        jlNgaytao.setText(currentDate.toString());
+        LocalDateTime currentDate = LocalDateTime.now();
+        String formattedTime = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"));
+        this.emp1 = emp;
+        jlNgaytao.setText(formattedTime);
         jTable2.setModel(model);
         jTable2.removeColumn(jTable2.getColumnModel().getColumn(5));
-       
+        DecimalFormat df = new DecimalFormat("#,###.00VND");
+
+        jlTongtien.setText(df.format(total));
+        jlTienthanhtoan.setText(df.format(total));
+
     }
+
     /**
      * Creates new form FromThanhToan
      */
-    public FromThanhToan() {
+    public FromThanhToan(orderInterface listener) {
         initComponents();
+        this.listener = listener;
     }
 
+//    private FromThanhToan(Employee emp) {
+//        this.emp1=emp;
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -55,9 +95,11 @@ public class FromThanhToan extends javax.swing.JFrame {
         jlTongtien = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        jlTienthanhtoan = new javax.swing.JLabel();
+        jlCheckout = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jtGhichu = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setFocusTraversalPolicyProvider(true);
@@ -90,17 +132,17 @@ public class FromThanhToan extends javax.swing.JFrame {
         jlTenKH.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jlTenKH.setForeground(new java.awt.Color(153, 51, 0));
         jlTenKH.setText("jlTenKH");
-        jPanel1.add(jlTenKH, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 50, 140, -1));
+        jPanel1.add(jlTenKH, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 50, 200, -1));
 
         jlSDT.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jlSDT.setForeground(new java.awt.Color(153, 51, 0));
         jlSDT.setText("jlSDT");
-        jPanel1.add(jlSDT, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 130, -1));
+        jPanel1.add(jlSDT, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 190, -1));
 
         jlNgaytao.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jlNgaytao.setForeground(new java.awt.Color(153, 51, 0));
         jlNgaytao.setText("Ngày tạo");
-        jPanel1.add(jlNgaytao, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 110, 140, -1));
+        jPanel1.add(jlNgaytao, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 110, 190, -1));
 
         jScrollPane2.setBackground(new java.awt.Color(255, 204, 102));
         jScrollPane2.setForeground(new java.awt.Color(153, 51, 0));
@@ -113,24 +155,23 @@ public class FromThanhToan extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tên sản phẩm", "Giá", "Số lượng", "Tổng giá"
+                "id", "Tên sản phẩm", "Giá", "Số lượng", "Thành tiền"
             }
         ));
         jTable2.setSelectionBackground(new java.awt.Color(255, 204, 102));
         jTable2.setSelectionForeground(new java.awt.Color(153, 51, 0));
         jScrollPane2.setViewportView(jTable2);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 170, 400, 190));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 440, 190));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(153, 51, 0));
         jLabel5.setText("TỔNG TIỀN");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 370, 110, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, 110, -1));
 
         jlTongtien.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jlTongtien.setForeground(new java.awt.Color(153, 51, 0));
-        jlTongtien.setText("0");
-        jPanel1.add(jlTongtien, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 370, 100, -1));
+        jPanel1.add(jlTongtien, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 410, 130, 20));
 
         jPanel2.setBackground(new java.awt.Color(153, 51, 0));
         jPanel2.setPreferredSize(new java.awt.Dimension(370, 3));
@@ -139,29 +180,33 @@ public class FromThanhToan extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 370, Short.MAX_VALUE)
+            .addGap(0, 450, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, 370, -1));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, 450, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(153, 51, 0));
         jLabel6.setText("SỐ TIỀN THANH TOÁN");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 430, 160, -1));
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 460, 160, -1));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(153, 51, 0));
-        jLabel7.setText("tiền thanh toán");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 426, 100, 20));
+        jlTienthanhtoan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jlTienthanhtoan.setForeground(new java.awt.Color(153, 51, 0));
+        jPanel1.add(jlTienthanhtoan, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 460, 130, 20));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(153, 51, 0));
-        jLabel8.setText("CHECKOUT");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 470, -1, -1));
+        jlCheckout.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jlCheckout.setForeground(new java.awt.Color(153, 51, 0));
+        jlCheckout.setText("CHECKOUT");
+        jlCheckout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlCheckoutMouseClicked(evt);
+            }
+        });
+        jPanel1.add(jlCheckout, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 500, -1, -1));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(153, 51, 0));
@@ -171,17 +216,36 @@ public class FromThanhToan extends javax.swing.JFrame {
                 jLabel9MouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(334, 470, 40, -1));
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 500, 40, -1));
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(153, 51, 0));
+        jLabel7.setText("GHI CHÚ");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, -1, -1));
+
+        jtGhichu.setBackground(new java.awt.Color(255, 204, 102));
+        jtGhichu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jtGhichu.setForeground(new java.awt.Color(153, 51, 0));
+        jtGhichu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtGhichuActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jtGhichu, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 140, 340, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 535, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -190,6 +254,46 @@ public class FromThanhToan extends javax.swing.JFrame {
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
         setVisible(false);
     }//GEN-LAST:event_jLabel9MouseClicked
+
+    private String createIDHD() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        String formattedTime = currentTime.format(DateTimeFormatter.ofPattern("yyMMddHHmmss"));
+        return "HD" + formattedTime;
+    }
+
+    private void jlCheckoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlCheckoutMouseClicked
+        String id = createIDHD();
+        String description = jtGhichu.getText();
+        Customer_DAO dao = new Customer_DAO();
+        String sdt = jlSDT.getText();
+        String cusID = dao.getCustomer(sdt).getId();
+        // thêm id nhân viên sau khi tạo đăng nhập thành công
+        String empID = emp1.getId();
+        LocalDate create_at = LocalDate.now();
+        Invoices inv = new Invoices(id, create_at, new Employee(empID), new Customer(cusID), description);
+        Invoices_DAO invoidao = new Invoices_DAO();
+        // thêm hóa đơn trước
+        invoidao.addInvoices(inv);
+        // thêm từng chi tiết hóa đơn
+        Invoicesdetail_DAO detai = new Invoicesdetail_DAO();
+        for (int i = 0; i < jTable2.getRowCount(); i++) {
+            String invoiID = id;
+            String prodID = (String) jTable2.getValueAt(i, 0);
+            int qty = (int) jTable2.getValueAt(i, 3);
+            detai.addInvoiceDetail(new Invoice_detail(new Product(prodID), qty, new Invoices(invoiID)));
+        }
+        this.listener.reloadOrder();
+
+        model2.setRowCount(0);
+        inHoaDon();
+        
+        checkout.onCheckout();
+        setVisible(false);
+    }//GEN-LAST:event_jlCheckoutMouseClicked
+
+    private void jtGhichuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtGhichuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtGhichuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -217,15 +321,47 @@ public class FromThanhToan extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(FromThanhToan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FromThanhToan().setVisible(true);
+//                Employee emp1=new Employee();
+//                new FromThanhToan(emp1).setVisible(true);
             }
         });
     }
 
+    private void inHoaDon() {
+        PrinterJob printerJob = PrinterJob.getPrinterJob();
+        printerJob.setJobName("Hóa đơn");
+
+        printerJob.setPrintable(new Printable() {
+            public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+                if (pageIndex > 0) {
+                    return Printable.NO_SUCH_PAGE;
+                }
+
+                Graphics2D g2d = (Graphics2D) graphics;
+                g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+                // In nội dung hóa đơn ở đây
+                jPanel1.printAll(graphics);
+
+                return Printable.PAGE_EXISTS;
+            }
+        });
+
+        boolean doPrint = printerJob.printDialog();
+        if (doPrint) {
+            try {
+                printerJob.print();
+            } catch (PrinterException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -234,15 +370,17 @@ public class FromThanhToan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable2;
+    private javax.swing.JLabel jlCheckout;
     private javax.swing.JLabel jlNgaytao;
     private javax.swing.JLabel jlSDT;
     private javax.swing.JLabel jlTenKH;
+    private javax.swing.JLabel jlTienthanhtoan;
     private javax.swing.JLabel jlTongtien;
+    private javax.swing.JTextField jtGhichu;
     // End of variables declaration//GEN-END:variables
 }

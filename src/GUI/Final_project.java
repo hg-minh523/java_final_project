@@ -15,8 +15,8 @@ import java.util.logging.Logger;
  */
 public class Final_project {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        GUI_Main home = new GUI_Main();
+//        GUI_Main home = new GUI_Main();
         
-        home.setVisible(true);
+//        home.setVisible(true);
     }  
 }

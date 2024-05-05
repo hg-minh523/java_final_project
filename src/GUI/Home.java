@@ -6,15 +6,20 @@ package GUI;
 
 import entity.Categoryes;
 import entity.Customer;
+import entity.Employee;
+import entity.Invoice_detail;
+import entity.Invoices;
 import entity.Product;
 import handlers.Category_DAO;
 import handlers.Customer_DAO;
 import handlers.Product_DAO;
+import interfaces.CheckoutInterface;
 import interfaces.categoryInterface;
 import interfaces.productInterface;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -37,24 +42,38 @@ import ravencell.TableActionEvent_Home;
  *
  * @author hgmin
  */
-public class Home extends javax.swing.JPanel implements productInterface, categoryInterface{
-
+public class Home extends javax.swing.JPanel implements productInterface, categoryInterface, CheckoutInterface {
 
     public Product_DAO prod_DAO;
     public Category_DAO category_DAO;
     private int skip = 0;
     DefaultTableModel modelCart;
-    /**
-     * Creates new form Home
-     */
-    public Home() {
-//        connection = new productControllers();
+    private static Employee emp1;
+    FromThanhToan frtt;
+    private Receipt rc ;
+            /**
+             * Creates new form Home
+             */
+
+    public Home(Employee emp, Receipt rc) {
+        this.emp1 = emp;
         prod_DAO = new Product_DAO();
-        category_DAO= new Category_DAO();
+        category_DAO = new Category_DAO();
+        frtt = new FromThanhToan(rc);
         initComponents();
-        
+
     }
 
+//    public Home() {
+//       
+//
+//        prod_DAO = new Product_DAO();
+//        category_DAO= new Category_DAO();
+//        initComponents();
+//
+//        
+//        
+//    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -70,7 +89,7 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jtCart = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
+        jbTong = new javax.swing.JButton();
         jPanel13 = new javax.swing.JPanel();
         txtphone = new javax.swing.JTextField();
         txthoten = new javax.swing.JTextField();
@@ -121,12 +140,12 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
 
             },
             new String [] {
-                "id", "Tên sản phẩm", "Giá", "Số lượng", "Tổng giá", ""
+                "id","Tên sản phẩm", "Giá", "Số lượng", "Thành tiền", ""
             }
         )
         {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false, true
+                false,false, false, true, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -138,21 +157,21 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
 
     jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 376, 330));
 
-    jButton2.setBackground(new java.awt.Color(102, 51, 0));
-    jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-    jButton2.setForeground(new java.awt.Color(255, 153, 0));
-    jButton2.setText("Tổng tiền");
-    jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+    jbTong.setBackground(new java.awt.Color(102, 51, 0));
+    jbTong.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+    jbTong.setForeground(new java.awt.Color(255, 153, 0));
+    jbTong.setText("Thanh toán");
+    jbTong.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
-            jButton2MouseClicked(evt);
+            jbTongMouseClicked(evt);
         }
     });
-    jButton2.addActionListener(new java.awt.event.ActionListener() {
+    jbTong.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            jButton2ActionPerformed(evt);
+            jbTongActionPerformed(evt);
         }
     });
-    jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 470, 100, 40));
+    jPanel1.add(jbTong, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 470, 150, 40));
 
     txtphone.setBackground(new java.awt.Color(255, 204, 102));
     txtphone.setText("Phone");
@@ -372,17 +391,41 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
     );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
 
-    }//GEN-LAST:event_jButton2MouseClicked
+    private void jbTongMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jbTongMouseClicked
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jbTongMouseClicked
+
+    private void jbTongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbTongActionPerformed
         String tenKH = txthoten.getText();
         String sdtKH = txtphone.getText();
-        DefaultTableModel model = (DefaultTableModel)jtCart.getModel();
-        FromThanhToan frtt = new FromThanhToan(tenKH,sdtKH,model);
+        Customer_DAO CusDao = new Customer_DAO();
+        Customer cus = CusDao.getCustomer(sdtKH);
+        Product_DAO proDao = new Product_DAO();
+
+        DefaultTableModel model = (DefaultTableModel) jtCart.getModel();
+//        double total=Double.parseDouble(jbTong.getText());
+        ArrayList<Invoice_detail> list = new ArrayList<Invoice_detail>();
+        for (int i = 0; i < jtCart.getRowCount(); i++) {
+            list.add(new Invoice_detail(proDao.getProduct((String) jtCart.getValueAt(i, 0)), (int) jtCart.getValueAt(i, 3), new Invoices()));
+
+        }
+        Invoices invoi = new Invoices();
+        double total = invoi.caculatorTotal(list);
+        CheckoutInterface chec = new CheckoutInterface() {
+            @Override
+            public void onCheckout() {
+
+                modelCart.setRowCount(0);
+                txthoten.setText("");
+                txtphone.setText("");
+            }
+        };
+
+        frtt.openForm(sdtKH, tenKH, sdtKH, model, total, emp1, chec);
         frtt.setVisible(true);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jbTongActionPerformed
+
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
 
@@ -393,7 +436,7 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
             prod_DAO.clearList();
             ArrayList<Product> products = prod_DAO.getList(skip);
             for (Product product : products) {
-                ProductPanel prodPanel = new ProductPanel(product,this);
+                ProductPanel prodPanel = new ProductPanel(product, this);
                 jPanel12.add(prodPanel);
             }
 
@@ -415,7 +458,7 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
             prod_DAO.clearList();
             ArrayList<Product> products = prod_DAO.getList(skip);
             for (Product product : products) {
-                ProductPanel prodPanel = new ProductPanel(product,this);
+                ProductPanel prodPanel = new ProductPanel(product, this);
                 jPanel12.add(prodPanel);
             }
 
@@ -428,7 +471,7 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
     private String generateCustomerId() {
         LocalDateTime currentTime = LocalDateTime.now();
@@ -437,27 +480,26 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
     }
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // lệnh thêm lưu thông tin vào database
-         // lệnh thêm lưu thông tin vào database
-              String customerId = generateCustomerId();
-              String name=txthoten.getText();
-              String sdt=txtphone.getText();
-              LocalDate create_at=LocalDate.now();
-               LocalDate update_at=LocalDate.now();
-              LocalDate delete_at=LocalDate.now();
-              System.out.println(""+sdt);
-            Customer  Cus=new Customer(customerId,  name,sdt, create_at, update_at, delete_at);
-              Customer_DAO liscus=new Customer_DAO();
-              if(!liscus.ktKhachHangTonTai(sdt)){
-                if(liscus.addCustomer(Cus)){
-                    JOptionPane.showConfirmDialog(this, "Đã thêm khách hàng");
+        // lệnh thêm lưu thông tin vào database
+        String customerId = generateCustomerId();
+        String name = txthoten.getText();
+        String sdt = txtphone.getText();
+        LocalDate create_at = LocalDate.now();
+        LocalDate update_at = LocalDate.now();
+        LocalDate delete_at = LocalDate.now();
+        System.out.println("" + sdt);
+        Customer Cus = new Customer(customerId, name, sdt, create_at, update_at, delete_at);
+        Customer_DAO liscus = new Customer_DAO();
+        if (!liscus.ktKhachHangTonTai(sdt)) {
+            if (liscus.addCustomer(Cus)) {
+                JOptionPane.showConfirmDialog(this, "Đã thêm khách hàng");
 
             }
-           
-              } 
-            else {
-                        JOptionPane.showConfirmDialog(this, "Khách hàng đã tồn tại");
 
-            }
+        } else {
+            JOptionPane.showConfirmDialog(this, "Khách hàng đã tồn tại");
+
+        }
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**
@@ -486,18 +528,32 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
             java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Home().setVisible(true);
+//                new Home(emp1).setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -518,6 +574,7 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton jbTong;
     private javax.swing.JScrollPane jsDaxay;
     private javax.swing.JScrollPane jscBanh;
     private javax.swing.JScrollPane jscCafe;
@@ -536,10 +593,46 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
 
     @Override
     public void onProductIdReceived(Product prod) {
-        Object[] newRowData = {prod.getId(),prod.getName(), prod.getPrice(), 1, prod.getPrice()};
+        int tam = -1;
+        for (int i = 0; i < jtCart.getRowCount(); i++) {
+            if (jtCart.getValueAt(i, 0).toString().equals(prod.getId())) {
+                tam = i;
+                break;
+            }
+        }
+        if (tam == -1) {
+            double newItemPrice = new Invoice_detail(prod, 1, new Invoices()).caculatorEachItem();
+//            System.out.println(newItemPrice);
+            DecimalFormat df = new DecimalFormat("#,###.00VND");
+
+            Object[] newRowData = {prod.getId(), prod.getName(), df.format(prod.getPrice()), 1, df.format(newItemPrice)};
 //jtCart.
-        modelCart = (DefaultTableModel)jtCart.getModel();
-        modelCart.addRow(newRowData);
+//            double total = Double.parseDouble(jbTong.getText()) + newItemPrice;
+//            String formattedTotal = String.format("%.3f", total);
+//            jbTong.setText(formattedTotal);
+
+            modelCart = (DefaultTableModel) jtCart.getModel();
+            modelCart.addRow(newRowData);
+        } else {
+            int qty = Integer.parseInt(jtCart.getValueAt(tam, 3).toString()) + 1;
+            double newItemPrice = new Invoice_detail(prod, qty, new Invoices()).caculatorEachItem();
+            DecimalFormat df = new DecimalFormat("#,###.00VND");
+
+            Object[] newRowData = {prod.getId(), prod.getName(), df.format(prod.getPrice()), qty, df.format(newItemPrice)};
+
+            jtCart.setValueAt(qty, tam, 3);
+            jtCart.setValueAt(df.format(newItemPrice), tam, 4);
+//            double sum=0;
+//            for(int i=0;i<jtCart.getRowCount();i++){
+//            
+//                sum+=Double.parseDouble(jtCart.getValueAt(i,4 ).toString());  
+//            }
+//            
+
+//             String formattedTotal = String.format("%.3f", sum);
+//            jbTong.setText(formattedTotal);
+//            
+        }
         jtCart.setRowHeight(30);
         TableActionEvent_Home event = new TableActionEvent_Home() {
             @Override
@@ -549,15 +642,16 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
 
         };
         jtCart.getColumnModel().getColumn(3).setCellEditor(new QuantytiCellEditor());
-        jtCart.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer(){
+        jtCart.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column); 
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 setHorizontalAlignment(SwingConstants.CENTER);
                 return this;
             }
-            
+
         });
+
         jtCart.getColumnModel().getColumn(5).setCellRenderer(new TableActionCellRender_Home());
         jtCart.getColumnModel().getColumn(5).setCellEditor(new TableActionCellEditor_Home(event));
     }
@@ -565,12 +659,12 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
     @Override
     public void getIdOfCategoy(String categoryId) {
         try {
-            
+
             jPanel12.removeAll();
             prod_DAO.clearList();
-            ArrayList<Product> products = prod_DAO.getListByCategory(0,categoryId);
+            ArrayList<Product> products = prod_DAO.getListByCategory(0, categoryId);
             for (Product product : products) {
-                ProductPanel prodPanel = new ProductPanel(product,this);
+                ProductPanel prodPanel = new ProductPanel(product, this);
                 jPanel12.add(prodPanel);
             }
 
@@ -581,4 +675,15 @@ public class Home extends javax.swing.JPanel implements productInterface, catego
         jPanel12.revalidate();
         jPanel12.repaint();
     }
+
+    @Override
+    public void onCheckout() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void reLoadProduct(ArrayList<Product> products) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }

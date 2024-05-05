@@ -6,8 +6,8 @@ package handlers;
 
 import ConnectDb.databaseConnection;
 import entity.Product;
-import entity.Invoices;
-//import entity.Statistic;
+import entity.Receipts;
+import entity.Statistic;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class Statistical_DAO {
 
     private Object ConnectDB;
-//    private Statistic statistic;
+    private Statistic statistic;
 
     public Statistical_DAO() {
     }

@@ -4,18 +4,25 @@
  */
 package GUI;
 
+import entity.Invoice_detail;
 import entity.Product;
 import entity.Invoices;
-import handlers.Receipt_DAO;
+import handlers.Invoicesdetail_DAO;
+import handlers.Invoices_DAO;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.sql.SQLException;
+import static java.time.Clock.system;
+import static java.time.InstantSource.system;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+//import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -23,25 +30,45 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 //import javax.swing.Im;
 
-
 /**
  *
  * @author hgmin
  */
-public class Receipt extends javax.swing.JPanel {
+public class Receipt extends javax.swing.JPanel implements interfaces.orderInterface {
+
     ImageIcon leftIcon;
     Image leftImg;
-    public Receipt_DAO dao;
+    ArrayList<Invoices> receipts;
+    public Invoices_DAO dao;
+    String[] columnNames = {"ID", "Mã nhân viên", "Mã khách hàng", "Ngày tạo", "Thành tiền"};
+//    private JButton jbtam;
+    private DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
     /**
      * Creates new form Home
+     *
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
     public Receipt() {
-        dao=new Receipt_DAO();
         initComponents();
+
+        dao = new Invoices_DAO();
+
+        try {
+            receipts = dao.getList();
+            for (Invoices re : receipts) {
+                Invoicesdetail_DAO invdao = new Invoicesdetail_DAO();
+                double total = dao.getSum(re.getId());
+                Object[] object = {re.getId(), re.getEmployee().getId(), re.getCustomer().getId(), re.getCredate_at(), total};
+                this.model.addRow(object);
+            }
+            System.out.println(this.model.getColumnCount());
+        } catch (Exception e) {
+
+        }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -51,21 +78,17 @@ public class Receipt extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton9 = new javax.swing.JButton();
+        jbtam = new javax.swing.JButton();
         panelMain = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel14 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jTxtSearch = new javax.swing.JTextField();
         jPanel15 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-
-        jButton9.setBackground(new java.awt.Color(255, 204, 255));
-        jButton9.setText("jButton6");
-        jButton9.setPreferredSize(new java.awt.Dimension(75, 32));
 
         panelMain.setBackground(new java.awt.Color(255, 255, 204));
         panelMain.setPreferredSize(new java.awt.Dimension(1088, 527));
@@ -81,10 +104,16 @@ public class Receipt extends javax.swing.JPanel {
         jLabel18.setText("Hóa đơn");
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Ionic-Ionicons-Search.16.png"))); // NOI18N
+        jLabel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        jTxtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                jTxtSearchActionPerformed(evt);
             }
         });
 
@@ -96,7 +125,7 @@ public class Receipt extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTxtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -105,7 +134,7 @@ public class Receipt extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+                    .addComponent(jTxtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -133,71 +162,77 @@ public class Receipt extends javax.swing.JPanel {
         jPanel2.add(jPanel14, java.awt.BorderLayout.PAGE_START);
 
         //ImageIcon icon = new ImageIcon("");
+        jTable1.setBackground(new java.awt.Color(102, 51, 0));
+        jTable1.setModel(this.model);
+        jTable1.setRowHeight(70);
+        jTable1.getTableHeader().setBorder(BorderFactory.createEmptyBorder());
+        jTable1.getTableHeader().setPreferredSize(new Dimension(0, 40));
+        jScrollPane1.setViewportView(jTable1);
 
-        String[] columnNames = { "ID","Mã nhân viên","Mã khách hàng", "Ngày tạo", "Ngày cập nhật","Ngày xóa", "Tổng tiền", "Thanh toán"};
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1088, Short.MAX_VALUE)
+        );
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
+        );
 
-        DefaultTableCellRenderer iconRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                ImageIcon iconTable = new ImageIcon("C:\\Users\\hgmin\\OneDrive\\Desktop\\study\\final_project\\final_project\\src\\main\\java\\GUI\\icon\\" +value.toString() +".png");
-                    Image imgTable = iconTable.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT);
-                    ImageIcon newIconTable = new ImageIcon(imgTable);
-                    return new JLabel(newIconTable);
-                }
-            };
+        jPanel2.add(jPanel15, java.awt.BorderLayout.CENTER);
 
-            // Set the custom renderer for the "Ảnh" column
+        panelMain.add(jPanel2, java.awt.BorderLayout.CENTER);
 
-            DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-            jTable1.setBackground(new java.awt.Color(102, 51, 0));
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, 1088, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jTxtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTxtSearchActionPerformed
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        if (!jTxtSearch.getText().isEmpty()) {
+            ((DefaultTableModel) jTable1.getModel()).setRowCount(0);
+            Invoices_DAO dao = new Invoices_DAO();
+            Invoices re = null;
             try {
+                re = dao.getInvoice(jTxtSearch.getText());
+            } catch (SQLException ex) {
+                Logger.getLogger(Receipt.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Receipt.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Object[] object = {re.getId(), re.getEmployee().getId(), re.getCustomer().getId(), re.getCredate_at(), 0, 0};
+            model.addRow(object);
+        } else {
+            try {
+                ((DefaultTableModel) jTable1.getModel()).setRowCount(0);
+
                 ArrayList<Invoices> receipts = dao.getList();
-                for ( Invoices re : receipts) {
-                    Object[] object = {re.getId(), re.getEmployee().getId(),re.getCustomer().getId(), re.getCredate_at(),re.getUpadte_at(),re.getDelete_at(),0,0};
+                for (Invoices re : receipts) {
+                    Invoicesdetail_DAO invdao = new Invoicesdetail_DAO();
+//        
+                    ArrayList<Invoice_detail> invs = invdao.getlist_Invoidetail(re.getId());
+                    Object[] object = {re.getId(), re.getEmployee().getId(), re.getCustomer().getId(), re.getCredate_at(), 0, 0};
                     model.addRow(object);
                 }
-            }catch( Exception e){
+            } catch (Exception e) {
 
             }
-            jTable1.setModel(model);
-            jTable1.setRowHeight(70);
-            jTable1.getTableHeader().setBorder(BorderFactory.createEmptyBorder());
-            jTable1.getTableHeader().setPreferredSize(new Dimension(0, 40));
-            jScrollPane1.setViewportView(jTable1);
-
-            javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
-            jPanel15.setLayout(jPanel15Layout);
-            jPanel15Layout.setHorizontalGroup(
-                jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1088, Short.MAX_VALUE)
-            );
-            jPanel15Layout.setVerticalGroup(
-                jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
-            );
-
-            jPanel2.add(jPanel15, java.awt.BorderLayout.CENTER);
-
-            panelMain.add(jPanel2, java.awt.BorderLayout.CENTER);
-
-            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-            this.setLayout(layout);
-            layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, 1088, Short.MAX_VALUE)
-            );
-            layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE))
-            );
-        }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        }
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments
@@ -228,6 +263,34 @@ public class Receipt extends javax.swing.JPanel {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -238,7 +301,6 @@ public class Receipt extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -247,19 +309,27 @@ public class Receipt extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTxtSearch;
+    private javax.swing.JButton jbtam;
     private javax.swing.JPanel panelMain;
     // End of variables declaration//GEN-END:variables
 
-    private void setDefaultCloseOperation(int DO_NOTHING_ON_CLOSE) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    @Override
+    public void reloadOrder() {
+       
+        this.model.setNumRows(0);
+         try {
+            receipts = dao.getList();
+            for (Invoices re : receipts) {
+                Invoicesdetail_DAO invdao = new Invoicesdetail_DAO();
+                double total = dao.getSum(re.getId());
+                Object[] object = {re.getId(), re.getEmployee().getId(), re.getCustomer().getId(), re.getCredate_at(), total};
+                this.model.addRow(object);
+            }
+            System.out.println(this.model.getColumnCount());
+        } catch (Exception e) {
 
-    private void pack() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    private Object getContentPane() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+        this.model.fireTableDataChanged();
     }
 }

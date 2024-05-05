@@ -6,6 +6,7 @@ package ravencell;
 
 import javax.swing.Icon;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -57,4 +58,21 @@ public class TheModel extends AbstractTableModel{
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return canEdit [columnIndex];
     }
+    
+    
+//  public void removeRow(int rowIndex) {
+//      if (rowIndex >= 0 && rowIndex < getRowCount()) {
+//         this.removeRow(rowIndex);
+//      }
+//  }
+    public void removeRow(int rowIndex) {
+        if (rowIndex >= 0 && rowIndex < getRowCount()) {
+            Object[][] newData = new Object[getRowCount() - 1][getColumnCount()];
+            System.arraycopy(rows, 0, newData, 0, rowIndex);
+            System.arraycopy(rows, rowIndex + 1, newData, rowIndex, getRowCount() - rowIndex - 1);
+            rows = newData;
+            fireTableRowsDeleted(rowIndex, rowIndex); // Notify JTable about deletion
+        }
+}
+        
 }

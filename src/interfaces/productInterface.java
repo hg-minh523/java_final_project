@@ -5,6 +5,7 @@
 package interfaces;
 
 import entity.Product;
+import java.util.ArrayList;
 
 /**
  *
@@ -12,4 +13,5 @@ import entity.Product;
  */
 public interface productInterface {
      void onProductIdReceived(Product p);
+     void reLoadProduct(ArrayList<Product> products);
 }

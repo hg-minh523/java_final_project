@@ -25,10 +25,9 @@ public Connection con=null;
 public databaseConnection(){
     String url="jdbc:sqlserver://localhost:1433;databaseName=cafe_managerment";
     String user="sa";
-    String pass="123456";
+    String pass="123123";
     try {
         con=DriverManager.getConnection(url, user, pass);
-        System.out.println(con);
     } catch (SQLException ex) {
         ex.printStackTrace();
     }

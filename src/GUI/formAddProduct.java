@@ -4,12 +4,11 @@
  */
 package GUI;
 
-
-
 import entity.Categoryes;
 import entity.Product;
 import handlers.Category_DAO;
 import handlers.Product_DAO;
+import interfaces.productInterface;
 import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -33,7 +32,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-
 /**
  *
  * @author Dell
@@ -44,12 +42,12 @@ public class formAddProduct extends javax.swing.JFrame {
     private static String path2;
     private Product_DAO productDAO;
     private Category_DAO categoryDAO;
-    private Product productOld = null ;
+    private Product productOld = null;
     private String checked = "save";
     private static String productID;
 
-
-    
+    private productInterface listener;
+    private ProductForm prf;
 
     /**
      * Creates new form formAddProduct
@@ -58,33 +56,35 @@ public class formAddProduct extends javax.swing.JFrame {
         initComponents();
         hienthidanhmuc();
         hienthiVAT();
-        
+        prf = new ProductForm();
     }
-    
-    public formAddProduct(Product product, String check){
+
+    public void openForm(Product product, String check, productInterface listener) {
         initComponents();
         hienthidanhmuc();
+        this.listener = listener;
+
         hienthiVAT();
         checked = check;
         productOld = product;
         productID = product.getId();
         txtTenSP.setText(product.getName());
-        txtGia.setText(product.getPrice()+"");
-        txtOrigin_price.setText(product.getOrigin_price()+"");
+        txtGia.setText(product.getPrice() + "");
+        txtOrigin_price.setText(product.getOrigin_price() + "");
         txtMoTa.setText(product.getDescription());
-        cboVAT.setSelectedItem(product.getVat()*100+"%");
+        cboVAT.setSelectedItem(product.getVat() * 100 + "%");
         cboCategory.setSelectedItem(product.getCategory().getName());
-        
+
         BufferedImage bi = null;
         try {
-            bi = ImageIO.read(new File("src/GUI/assets/"+product.getImage()));
+            bi = ImageIO.read(new File("src/GUI/assets/" + product.getImage()));
         } catch (IOException ex) {
             Logger.getLogger(formAddProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
         Image img = bi.getScaledInstance(170, 140, Image.SCALE_SMOOTH);
         ImageIcon icon = new ImageIcon(img);
         lblimg.setIcon(icon);
-        if(check.equalsIgnoreCase("view")){
+        if (check.equalsIgnoreCase("view")) {
             txtTenSP.setEditable(false);
             txtGia.setEditable(false);
             txtOrigin_price.setEditable(false);
@@ -93,8 +93,7 @@ public class formAddProduct extends javax.swing.JFrame {
             cboCategory.setEnabled(false);
         }
     }
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -287,13 +286,13 @@ public class formAddProduct extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
-        
+
     }//GEN-LAST:event_formComponentHidden
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
-    private void hienthidanhmuc(){
+    private void hienthidanhmuc() {
         ArrayList<Categoryes> list = new ArrayList<>();
         categoryDAO = new Category_DAO();
         try {
@@ -305,15 +304,16 @@ public class formAddProduct extends javax.swing.JFrame {
         }
         int n = list.size();
         String items[] = new String[n];
-        for(int i = 0; i< list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             items[i] = list.get(i).getName();
         }
         cboCategory.setModel(new DefaultComboBoxModel<String>(items));
     }
-    private void hienthiVAT(){
-        String[] VAT = {"10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"};
+
+    private void hienthiVAT() {
+        String[] VAT = {"10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%"};
         cboVAT.setModel(new DefaultComboBoxModel<String>(VAT));
-     
+
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         JFileChooser chooser = new JFileChooser();
@@ -327,7 +327,7 @@ public class formAddProduct extends javax.swing.JFrame {
             ImageIcon icon = new ImageIcon(img);
             lblimg.setIcon(icon);
         } catch (Exception e) {
-            
+
         }
     }//GEN-LAST:event_jButton1ActionPerformed
     private String generateCustomerId() {
@@ -336,22 +336,22 @@ public class formAddProduct extends javax.swing.JFrame {
         return "SP" + formattedTime;
     }
     private void jbtnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAcceptActionPerformed
-        
-        switch(checked){
+
+        switch (checked) {
             case "view":
                 setVisible(false);
                 break;
             case "edit":
-                
+
                 updateProduct();
                 break;
             case "save":
-                
+
                 saveProduct();
                 break;
         }
 
-        
+
     }//GEN-LAST:event_jbtnAcceptActionPerformed
 
     private void updateProduct() {
@@ -364,45 +364,44 @@ public class formAddProduct extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(formAddProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         String id = productID;
         String name = txtTenSP.getText();
         String strPrice = txtGia.getText();
         Double price = Double.parseDouble(strPrice);
         String categoryName = cboCategory.getSelectedItem().toString();
         Categoryes category = null;
-        for(Categoryes cgr : listCategory){
-            if(cgr != null){
-                if(cgr.getName().equals(categoryName)){
-                category =cgr;
-                break;
-            }
+        for (Categoryes cgr : listCategory) {
+            if (cgr != null) {
+                if (cgr.getName().equals(categoryName)) {
+                    category = cgr;
+                    break;
+                }
             }
         }
         Double oriqin_price = Double.parseDouble(txtOrigin_price.getText());
         String discription = txtMoTa.getText();
         LocalDate createAt = LocalDate.now();
-        Double VAT = Double.parseDouble(cboVAT.getSelectedItem().toString().replace("%", ""))/100;
+        Double VAT = Double.parseDouble(cboVAT.getSelectedItem().toString().replace("%", "")) / 100;
         String image = null;
-        if(path2 != null){
+        if (path2 != null) {
             String[] img = path2.split("\\\\");
-            image = img[img.length -1];
-        }else{
+            image = img[img.length - 1];
+        } else {
             image = productOld.getImage();
         }
-        Product product = new Product(id, name, discription,price,image,VAT,oriqin_price,category,createAt);
+        Product product = new Product(id, name, discription, price, image, VAT, oriqin_price, category, createAt);
         productDAO = new Product_DAO();
-        if(productDAO.updateProduct(product)){
+        if (productDAO.updateProduct(product)) {
             JOptionPane.showMessageDialog(this, "Đã cập nhật sản phẩm");
             setVisible(false);
             productDAO.clearList();
             ArrayList<Product> list = productDAO.getListProduct();
-            ProductForm prf = new ProductForm(list);
+            this.listener.reLoadProduct(list);
+
             prf.setVisible(true);
-            prf.revalidate();
-            prf.repaint();
-        }else{
-            
+        } else {
+
             JOptionPane.showMessageDialog(this, "Cập nhật không thành công");
         }
     }
@@ -417,41 +416,39 @@ public class formAddProduct extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(formAddProduct.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         String id = generateCustomerId();
         String name = txtTenSP.getText();
         String strPrice = txtGia.getText();
         Double price = Double.parseDouble(strPrice);
         String categoryName = cboCategory.getSelectedItem().toString();
         Categoryes category = null;
-        for(Categoryes cgr : listCategory){
-            if(cgr != null){
-                if(cgr.getName().equals(categoryName)){
-                category =cgr;
-                break;
-            }
+        for (Categoryes cgr : listCategory) {
+            if (cgr != null) {
+                if (cgr.getName().equals(categoryName)) {
+                    category = cgr;
+                    break;
+                }
             }
         }
         Double oriqin_price = Double.parseDouble(txtOrigin_price.getText());
         String discription = txtMoTa.getText();
         LocalDate createAt = LocalDate.now();
-        Double VAT = Double.parseDouble(cboVAT.getSelectedItem().toString().replace("%", ""))/100;
+        Double VAT = Double.parseDouble(cboVAT.getSelectedItem().toString().replace("%", "")) / 100;
         String[] img = path2.split("\\\\");
-        String image = img[img.length -1];
-        Product product = new Product(id, name, discription,price,image,VAT,oriqin_price,category,createAt);
+        String image = img[img.length - 1];
+        Product product = new Product(id, name, discription, price, image, VAT, oriqin_price, category, createAt);
         productDAO = new Product_DAO();
-        if(productDAO.saveProduct(product)){
-            JOptionPane.showMessageDialog(this, "Đã thêm sản phẩm mới"); 
+        if (productDAO.saveProduct(product)) {
+            JOptionPane.showMessageDialog(this, "Đã thêm sản phẩm mới");
             setVisible(false);
-            productDAO.clearList();
-            ArrayList<Product> list = productDAO.getListProduct();
-            ProductForm prf = new ProductForm(list);
+           ArrayList<Product> list = productDAO.getListProduct();
+            this.listener.reLoadProduct(list);
+
             prf.setVisible(true);
-            prf.revalidate();
-            prf.repaint();
-            
-        }else{
-            
+
+        } else {
+
             JOptionPane.showMessageDialog(this, "Thêm không thành công");
         }
     }
@@ -498,8 +495,8 @@ public class formAddProduct extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new formAddProduct().setVisible(true);
-                
+//                new formAddProduct().setVisible(true);
+
             }
         });
     }
@@ -534,5 +531,4 @@ public class formAddProduct extends javax.swing.JFrame {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    
 }

@@ -5,7 +5,9 @@
 package GUI;
 
 import entity.Account;
+import entity.Employee;
 import handlers.Account_DAO;
+import handlers.Employee_DAO;
 import javax.swing.JOptionPane;
 
 /**
@@ -200,15 +202,16 @@ public class login extends javax.swing.JFrame {
         Account_DAO accountDAO = new Account_DAO();
         String username = txtUsername.getText();
         String password = txtPassword.getText();
-        System.out.println(password +username );
         Account account = accountDAO.login(username,password );
-        
         if(account == null){
             JOptionPane.showMessageDialog(null, "username/password không đúng");
         }
         else{
             JOptionPane.showMessageDialog(null, "Đăng nhập thành công");
-            GUI_Main show = new GUI_Main();
+            Employee_DAO empdao=new Employee_DAO();
+            Employee emp=empdao.getEmployee(account.getEmp().getId());
+           
+            GUI_Main show = new GUI_Main(emp);
             show.setVisible(true);
             this.dispose();
         }
@@ -239,6 +242,20 @@ public class login extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

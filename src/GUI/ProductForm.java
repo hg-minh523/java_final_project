@@ -37,7 +37,8 @@ import ravencell.TheModel;
  *
  * @author Dell
  */
-public class ProductForm extends javax.swing.JPanel {
+public class ProductForm extends javax.swing.JPanel implements interfaces.productInterface {
+
     ArrayList<Product> list = new ArrayList<>();
     ArrayList<Product> listProduct_Category = new ArrayList<>();
     ArrayList<Categoryes> listCategory = new ArrayList<>();
@@ -46,31 +47,21 @@ public class ProductForm extends javax.swing.JPanel {
     private JButton btnCategory;
     private String category_id;
     private TableCellRenderer TableActionCellRender;
-    
+    private TheModel model;
+
+    formAddProduct fm;
 
     /**
      * Creates new form Product
      */
-    public ProductForm(ArrayList<Product> products) {
-        initComponents();
-        tableProduct.revalidate();
-        tableProduct.repaint();
-        hienthilentable(products);
-        hienthiCategory();
-        
-
-    }
 
     public ProductForm() {
 
         productDAO.clearList();
         list = productDAO.getListProduct();
         initComponents();
-        tableProduct.revalidate();
-        tableProduct.repaint();
         hienthilentable(list);
         hienthiCategory();
-
 
     }
 
@@ -89,7 +80,7 @@ public class ProductForm extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         pnCategory = new javax.swing.JPanel();
@@ -109,21 +100,27 @@ public class ProductForm extends javax.swing.JPanel {
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel3.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Ionic-Ionicons-Search.16.png"))); // NOI18N
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 29, 30));
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel3MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 29, 30));
 
         jLabel2.setText("__________________________________________________________");
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel2.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 20, 300, 30));
 
-        jTextField1.setBorder(null);
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtName.setBorder(null);
+        txtName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtNameActionPerformed(evt);
             }
         });
-        jPanel2.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 290, 30));
+        jPanel2.add(txtName, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 10, 290, 30));
 
         jPanel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -199,7 +196,7 @@ public class ProductForm extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -215,13 +212,23 @@ public class ProductForm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
         // TODO add your handling code here:
-    }// GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtNameActionPerformed
 
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+        String name = txtName.getText();
+        System.out.println(name);
+        Product_DAO product_DAO = new Product_DAO();
+        ArrayList<Product> list = product_DAO.searchByName(name);
+        hienthilentable(list);
+    }//GEN-LAST:event_jLabel3MouseClicked
+
+//    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField1ActionPerformed
+//        // TODO add your handling code here:
+//    }// GEN-LAST:event_jTextField1ActionPerformed
     private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jPanel3MouseClicked
-        formAddProduct fm = new formAddProduct();
-        fm.setVisible(true);
+
     }// GEN-LAST:event_jPanel3MouseClicked
 
     public static void main(String args[]) {
@@ -273,28 +280,28 @@ public class ProductForm extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel pnCategory;
     private javax.swing.JTable tableProduct;
+    private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 
     public void hienthilentable(ArrayList<Product> products) {
-//        tableProduct.setModel(new DefaultTableModel());
-        
-        String[] columnName = { "Ảnh", "Tên sản phẩm", "Giá Bán", "" };
+
+
+        String[] columnName = {"Ảnh", "Tên sản phẩm", "Giá Bán", ""};
         Object[][] rows = new Object[products.size()][4];
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getImage() != null) {
-                 ImageIcon image = new ImageIcon(new ImageIcon("src/GUI/assets/"+products.get(i).getImage())
-                         .getImage().getScaledInstance(150,120, Image.SCALE_SMOOTH));
-                 rows[i][0] = image;
+                ImageIcon image = new ImageIcon(new ImageIcon("src/GUI/assets/" + products.get(i).getImage())
+                        .getImage().getScaledInstance(150, 120, Image.SCALE_SMOOTH));
+                rows[i][0] = image;
             } else {
                 rows[i][0] = null;
             }
             rows[i][1] = products.get(i).getName();
             rows[i][2] = products.get(i).getPrice();
         }
-        TheModel model = new TheModel(rows, columnName);
+        model = new TheModel(rows, columnName);
         tableProduct.setModel(model);
         tableProduct.setRowHeight(120);
         tableProduct.getColumnModel().getColumn(0).setPreferredWidth(150);
@@ -316,6 +323,7 @@ public class ProductForm extends javax.swing.JPanel {
         };
         tableProduct.getColumnModel().getColumn(3).setCellRenderer(new TableActionCellRender());
         tableProduct.getColumnModel().getColumn(3).setCellEditor(new TableActionCellEditor(event));
+        model.fireTableDataChanged();
     }
 
     public void hienthilentableByCategory(String category_id) {
@@ -334,19 +342,19 @@ public class ProductForm extends javax.swing.JPanel {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ProductForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if(listCategory.isEmpty()){
+        if (listCategory.isEmpty()) {
             return;
         }
-        for(Categoryes category : listCategory){
+        for (Categoryes category : listCategory) {
             JButton btnCategory = new JButton(category.getName());
-            btnCategory.setPreferredSize(new Dimension(72,50));
-            
+            btnCategory.setPreferredSize(new Dimension(72, 50));
+
             btnCategory.addActionListener(e -> {
-                String selectedCategory = ((JButton)e.getSource()).getText();
-                
+                String selectedCategory = ((JButton) e.getSource()).getText();
+
                 category_id = category.getId();
                 hienthilentableByCategory(category_id);
-              
+
             });
             pnCategory.add(btnCategory);
         }
@@ -401,8 +409,7 @@ public class ProductForm extends javax.swing.JPanel {
                 break;
             }
         }
-
-        formAddProduct fm = new formAddProduct(product, check);
+        fm.openForm(product, check,this);
         fm.setVisible(true);
     }
 
@@ -434,9 +441,31 @@ public class ProductForm extends javax.swing.JPanel {
                 break;
             }
         }
-
-        formAddProduct fm = new formAddProduct(product, check);
+        fm = new formAddProduct();
+        fm.openForm(product, check,this);
         fm.setVisible(true);
+
     }
 
+    public void removeModel() {
+
+    }
+
+    @Override
+    public void onProductIdReceived(Product p) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void reLoadProduct(ArrayList<Product> products) {
+        if (model != null) {
+            int rowCount = model.getRowCount();
+            for (int i = rowCount - 1; i >= 0; i--) {
+                model.removeRow(i);
+            }
+            this.hienthilentable(products);
+        } else {
+        }
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

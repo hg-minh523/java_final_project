@@ -12,17 +12,26 @@ public class Invoice_detail {
     
     private Product product;
     private int quantity;
+    private Invoices invoices;
+    
 
     public Invoice_detail() {
        
     }
 
-    public Invoice_detail( Product product, int quantity) {
+    public Invoice_detail(Product product, int quantity, Invoices invoices) {
         this.product = product;
         this.quantity = quantity;
+        this.invoices = invoices;
     }
 
-    
+    public Invoices getInvoices() {
+        return invoices;
+    }
+
+    public void setInvoices(Invoices invoices) {
+        this.invoices = invoices;
+    }
 
     public Product getProduct() {
         return product;
@@ -42,7 +51,7 @@ public class Invoice_detail {
         this.quantity = quantity;
     }
     public double caculatorEachItem(){
-        return (product.getPrice()*quantity)-product.getVat()*(product.getPrice()*quantity);
+        return (product.getPrice()*quantity)+product.getVat()*(product.getPrice()*quantity);
     }
     
 }

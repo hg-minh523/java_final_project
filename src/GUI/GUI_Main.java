@@ -5,6 +5,7 @@
 package GUI;
 
 import ConnectDb.databaseConnection;
+import entity.Employee;
 import entity.Product;
 import handlers.Product_DAO;
 import java.awt.BorderLayout;
@@ -26,19 +27,27 @@ public class GUI_Main extends javax.swing.JFrame {
     private Home home;
     private ProductForm product;
     private Receipt receipt;
+    private Report report;
 //    private Report report;
 
-    
+    private static Employee emp;
+
 //public Home home;
     /**
      * Creates new form GUI_Main
      */
-    public GUI_Main() {
+    public GUI_Main(Employee emp1) {
+        initComponents();
         this.receipt = new Receipt();
         this.product = new ProductForm();
-//        this.report = new Report();
-        initComponents();
-        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        this.emp = emp1;
+        home = new Home(emp,this.receipt);
+        JpMain.add(home, BorderLayout.CENTER);
+        home.setVisible(true);
+
+        this.report = new Report();
+        this.home.setVisible(true);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     /**
@@ -255,24 +264,32 @@ public class GUI_Main extends javax.swing.JFrame {
 
         JbDu.setBackground(new java.awt.Color(204, 102, 0));
         JbDu.setToolTipText("");
+        JbDu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JbDuMouseClicked(evt);
+            }
+        });
 
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/Custom-Icon-Design-Mono-General-3-Home.48.png"))); // NOI18N
+        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/icon/shutdown_50px.png"))); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(255, 204, 51));
-        jLabel12.setText("Home");
+        jLabel12.setText("LOGOUT");
         jLabel12.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout JbDuLayout = new javax.swing.GroupLayout(JbDu);
         JbDu.setLayout(JbDuLayout);
         JbDuLayout.setHorizontalGroup(
             JbDuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JbDuLayout.createSequentialGroup()
-                .addContainerGap(31, Short.MAX_VALUE)
+            .addGroup(JbDuLayout.createSequentialGroup()
                 .addGroup(JbDuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12)
-                    .addComponent(jLabel11))
-                .addGap(23, 23, 23))
+                    .addGroup(JbDuLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel12))
+                    .addGroup(JbDuLayout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(jLabel11)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         JbDuLayout.setVerticalGroup(
             JbDuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -290,9 +307,6 @@ public class GUI_Main extends javax.swing.JFrame {
 
         JpMain.setBackground(new java.awt.Color(255, 204, 204));
         JpMain.setLayout(new java.awt.BorderLayout());
-        home=new Home();
-        JpMain.add(home,BorderLayout.CENTER);
-        home.setVisible(true);
         //       JpMain.remove(home);
         jpanelMain.add(JpMain, java.awt.BorderLayout.CENTER);
 
@@ -311,33 +325,30 @@ public class GUI_Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void JpHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JpHomeMouseClicked
-       
+
         home.setVisible(true);
-        receipt.setVisible(false);
         product.setVisible(false);
-        
+        receipt.setVisible(false);
+
     }//GEN-LAST:event_JpHomeMouseClicked
 
     private void JbReceiptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbReceiptMouseClicked
-      home.setVisible(false);
-      product.setVisible(false);
-      
-      JpMain.add(receipt,BorderLayout.CENTER);
-    receipt.setVisible(true);
-    
-      
-       
-               
+        home.setVisible(false);
+        product.setVisible(false);
+
+        JpMain.add(receipt, BorderLayout.CENTER);
+        receipt.setVisible(true);
+
+
     }//GEN-LAST:event_JbReceiptMouseClicked
 
     private void JbStatisticMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbStatisticMouseClicked
         home.setVisible(false);
         receipt.setVisible(false);
         product.setVisible(false);
-        
 
-//        JpMain.add(report, BorderLayout.CENTER);
-//        report.setVisible(true);
+        JpMain.add(report, BorderLayout.CENTER);
+        report.setVisible(true);
     }//GEN-LAST:event_JbStatisticMouseClicked
 
     private void JbProductAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_JbProductAncestorAdded
@@ -347,10 +358,16 @@ public class GUI_Main extends javax.swing.JFrame {
     private void JbProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbProductMouseClicked
         home.setVisible(false);
         receipt.setVisible(false);
-        
+
         JpMain.add(product, BorderLayout.CENTER);
         product.setVisible(true);
     }//GEN-LAST:event_JbProductMouseClicked
+
+    private void JbDuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JbDuMouseClicked
+        login login = new login();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_JbDuMouseClicked
 
     /**
      * @param args the command line arguments
@@ -382,7 +399,7 @@ public class GUI_Main extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUI_Main().setVisible(true);
+//                new GUI_Main().setVisible(true);
 //                databaseConnection connection=databaseConnection.getIntance();
 //                System.err.println(connection);
             }

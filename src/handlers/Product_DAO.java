@@ -108,6 +108,7 @@ public class Product_DAO {
         return null;
     }
     public ArrayList<Product> getListProduct(){
+        ArrayList<Product> listProducts = new ArrayList<>();
         databaseConnection connectDB = new databaseConnection();
         Connection conn = connectDB.getConnection();
         try {
@@ -130,24 +131,24 @@ public class Product_DAO {
 //                        LocalDate.parse(result.getString("update_at"))
 
                 );
-                products.add(prod);
+                listProducts.add(prod);
             }
             result.close();
             statement.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return products;
+        return listProducts;
     }
     public ArrayList<Product> searchByName(String name){
-        
+        ArrayList<Product> list = new ArrayList<>();
         databaseConnection connectDB = new databaseConnection();
         Connection conn = connectDB.getConnection();
         
         try {
-            String sql = "select * from products where name like N'?%'";
+            String sql = "select * from products where name like ?";
             PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setString(1, name);
+            statement.setString(1, "%" + name + "%");
             ResultSet result = statement.executeQuery();
             Product prod = null;
             while (result.next()) {
@@ -165,14 +166,14 @@ public class Product_DAO {
 //                        LocalDate.parse(result.getString("update_at"))
 
                 );
-                products.add(prod);
+                list.add(prod);
             }
             result.close();
             statement.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return products;
+        return list;
     }
     
     public boolean saveProduct(Product product){
@@ -275,4 +276,42 @@ public class Product_DAO {
         }
         return products;
     }
+    public Product getProduct(String id) {
+    databaseConnection connectDB = new databaseConnection();
+    Connection conn = connectDB.getConnection();
+    PreparedStatement statement = null;
+    ResultSet result = null;
+
+    try {
+        String sql = "select * from products where id = ?";
+        statement = conn.prepareStatement(sql);
+        statement.setString(1, id);
+        result = statement.executeQuery();
+        
+        if (result.next()) {
+            Product prod = new Product(
+                result.getString("id"),
+                result.getString("name"),
+                result.getString("description"),
+                result.getDouble("price"),
+                result.getString("image"),
+                result.getDouble("vat"),
+                result.getDouble("origin_price"),
+                new Categoryes(result.getString("category_id")),
+                LocalDate.parse(result.getString("create_at"))
+            );
+
+            return prod;
+        } else {
+            // Không tìm thấy sản phẩm với id tương ứng
+            return null;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } 
+            // Đóng PreparedStatement
+        return null;
+   
+
+}
 }
